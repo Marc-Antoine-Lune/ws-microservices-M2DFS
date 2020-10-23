@@ -98,7 +98,7 @@ public class ProductController {
         }
 
     }
-
+    
     // Mettre à jour un produit
     @PutMapping("/updateById/{productId}")
     public void updateProduit(@PathVariable int productId, @RequestBody Product product) {
@@ -111,6 +111,17 @@ public class ProductController {
                 p.setPrixAchat(product.getPrixAchat());
             }
         }
+    }
+
+    //Calculer la marge d'un produit
+    @GetMapping("/AdminProduits")
+    public Map<String, Integer> calculerMargeProduit(){
+        Map<String, Integer> response = new HashMap<String, Integer>();
+        for(Product p : productList){
+            response.put(p.toString(), p.getPrix()-p.getPrixAchat());
+        }
+
+        return response;
     }
 
 
