@@ -98,7 +98,7 @@ public class ProductController {
         }
 
     }
-    
+
     // Mettre à jour un produit
     @PutMapping("/updateById/{productId}")
     public void updateProduit(@PathVariable int productId, @RequestBody Product product) {
@@ -131,6 +131,10 @@ public class ProductController {
         return productDao.chercherUnProduitCher(400);
     }
 
+    @GetMapping("/productsOrder")
+    public List<Product> trierProduitsParOrdreAlphabetique(){
+        return productDao.trierProduitsParOrdreAlphabetique();
+    }
 
 
 }
