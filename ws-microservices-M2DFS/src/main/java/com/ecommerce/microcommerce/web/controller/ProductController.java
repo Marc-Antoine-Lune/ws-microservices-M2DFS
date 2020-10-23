@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Api( description="API Tp MicroService M2DFS")
 @RestController
 public class ProductController {
 
@@ -41,8 +44,17 @@ public class ProductController {
         }
     };
 
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "ok"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 404, message = "Not found"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+
 
     //Récupérer la liste des produits
+    @ApiOperation(value = "Récupère la liste de tous les produits")
     @RequestMapping(value = "/Produits", method = RequestMethod.GET)
     public MappingJacksonValue listeProduits() {
         Iterable<Product> produits = productDao.findAll();
@@ -55,6 +67,7 @@ public class ProductController {
 
 
     //Récupérer un produit par son id
+    @ApiOperation(value = "Récupère un produit grâce à son id")
     @RequestMapping(value = "/getById/{productId}", method = RequestMethod.GET )
     public Product afficherUnProduit(@PathVariable int productId) {
         Product response = null;
@@ -70,6 +83,7 @@ public class ProductController {
 
 
     //ajouter un produit
+    @ApiOperation(value = "Ajoute un produit")
     @PostMapping(value = "/Produits")
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
         Product productAdded =  productDao.save(product);
@@ -92,6 +106,8 @@ public class ProductController {
     }
 
     // supprimer un produit
+    @ApiOperation(value = "Supprime un produit")
+
     @DeleteMapping("deleteById/{productId}")
     public void supprimerProduit(@PathVariable int productId) {
         for(Product product : productList) {
@@ -103,6 +119,7 @@ public class ProductController {
     }
 
     // Mettre à jour un produit
+    @ApiOperation(value = "Met à jour un produit")
     @PutMapping("/updateById/{productId}")
     public void updateProduit(@PathVariable int productId, @RequestBody Product product) {
 
@@ -117,6 +134,7 @@ public class ProductController {
     }
 
     //Calculer la marge d'un produit
+    @ApiOperation(value = "Calculer la marge d'un produit")
     @GetMapping("/AdminProduits")
     public Map<String, Integer> calculerMargeProduit(){
         Map<String, Integer> response = new HashMap<String, Integer>();
@@ -134,6 +152,7 @@ public class ProductController {
         return productDao.chercherUnProduitCher(400);
     }
 
+    @ApiOperation(value = "Recupere les produits par ordre alphabetique")
     @GetMapping("/productsOrder")
     public List<Product> trierProduitsParOrdreAlphabetique(){
         return productDao.trierProduitsParOrdreAlphabetique();
