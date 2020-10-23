@@ -16,14 +16,28 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-
-
+@RestController
 public class ProductController {
 
     @Autowired
     private ProductDao productDao;
+
+    private static  List<Product> productList = new ArrayList<Product>() {
+
+        {
+            add(new Product(1, "Ordinateur portable", 350, 120));
+            add(new Product(2, "Aspirateur Robot", 500, 200));
+            add(new Product(3, "Table de ping pong", 750, 400));
+            add(new Product(4, "Table de ping pong", 759, 450));
+
+        }
+    };
 
 
     //Récupérer la liste des produits
@@ -38,9 +52,16 @@ public class ProductController {
     }
 
 
-    //Récupérer un produit par son Id
-    public Product afficherUnProduit() {
-        return null;
+    //Récupérer un produit par son id
+    @RequestMapping(value = "/getById/{productId}", method = RequestMethod.GET )
+    public Product afficherUnProduit(@PathVariable int productId) {
+        Product response = null;
+        for(Product product : productList) {
+            if (product.getId() == (productId)) {
+                response = product;
+            }
+        }
+        return response;
     }
 
 
@@ -49,8 +70,9 @@ public class ProductController {
     //ajouter un produit
     @PostMapping(value = "/Produits")
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
+        //System.out.println(product.);
 
-        Product productAdded =  productDao.save(product);
+        /*Product productAdded =  productDao.save(product);
 
         if (productAdded == null)
             return ResponseEntity.noContent().build();
@@ -61,15 +83,34 @@ public class ProductController {
                 .buildAndExpand(productAdded.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).build();*/
+        //productList.add(new Product(product.getId(), product.getNom(), product.getPrixAchat(), product.getPrix()));
+    return null;
     }
 
     // supprimer un produit
-    public void supprimerProduit() {
+    @DeleteMapping("deleteById/{productId}")
+    public void supprimerProduit(@PathVariable int productId) {
+        for(Product product : productList) {
+            if (product.getId() == (productId)) {
+                productList.remove(product);
+            }
+        }
+
     }
 
     // Mettre à jour un produit
-    public void updateProduit(@RequestBody Product product) {
+    @PutMapping("/updateById/{productId}")
+    public void updateProduit(@PathVariable int productId, @RequestBody Product product) {
+
+        for(Product p : productList) {
+            if (p.getId() == (productId)) {
+                p.setId(product.getId());
+                p.setNom(product.getNom());
+                p.setPrix(product.getPrix());
+                p.setPrixAchat(product.getPrixAchat());
+            }
+        }
     }
 
 
